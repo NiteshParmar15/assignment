@@ -10,7 +10,7 @@ resource "aws_lb" "nlb" {
   name               = "torum-nlb"
   internal           = false
   load_balancer_type = "network"
-  subnets            = [var.private_subnet_id]
+  subnets            = [var.public_subnet_id]
   ip_address_type    = "ipv4"
   enable_deletion_protection = false
 

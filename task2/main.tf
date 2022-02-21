@@ -18,7 +18,7 @@ module "ec2" {
 
 module "nlb" {
   source = "./loadbalancer"
-  private_subnet_id = module.vpc.private_subnet_id
+  public_subnet_id = module.vpc.public_subnet_id
   vpc_id = module.vpc.vpc_id
   aws_instance_id= module.ec2.aws_instance_id
   depends_on = [
