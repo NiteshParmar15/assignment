@@ -64,6 +64,23 @@ resource "aws_route" "public_internet_gateway" {
     aws_internet_gateway.myIGW
   ]
 }
+resource "aws_eip" "nat-gateway-eip" {
+  vpc = true
+  depends_on = [
+    aws_vpc.myVPC
+  ]
+}
+resource "aws_nat_gateway" "nat-gateway" {
+  allocation_id = aws_eip.nat-gateway-eip.id
+  
+  subnet_id = aws_subnet.public_subnet.id
+  tags = {
+    Name = "torum_Nat-Gateway"
+  }
+  depends_on = [
+    aws_eip.nat-gateway-eip
+  ]
+}
 resource "aws_route_table" "private_route_table" {
   vpc_id = aws_vpc.myVPC.id
   tags = {
@@ -74,6 +91,14 @@ resource "aws_route_table" "private_route_table" {
   ]
 }
 
+resource "aws_route" "private_nat_gateway" {
+  route_table_id         = aws_route_table.private_route_table.id
+  destination_cidr_block = "0.0.0.0/0"
+  nat_gateway_id         = aws_nat_gateway.nat-gateway.id
+  depends_on = [
+    aws_nat_gateway.nat-gateway
+  ]
+}
 
 resource "aws_route_table_association" "public_route_table_association" {
   subnet_id      = aws_subnet.public_subnet.id
